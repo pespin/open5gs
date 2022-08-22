@@ -31,6 +31,13 @@ mongo_sources = files('''
     mongo/ims.c
 '''.split())
 
+json_sources = files('''
+    json/json.c
+    external/cjson/cJSON.c
+'''.split())
+libdbi_sources += [json_sources]
+cjson_inc = include_directories('./external/')
+
 libmongoc_dep = dependency('libmongoc-1.0', required: true)
 if libmongoc_dep.found()
   libdbi_conf.set('WITH_MONGOC', 1)
@@ -41,11 +48,18 @@ configure_file(output : 'dbi-config-private.h', configuration : libdbi_conf)
 
 libdbi_inc = include_directories('.')
 
+dbi_cc_flags = ['-DOGS_DBI_COMPILATION']
+if cc.get_id() == 'gcc' or cc.get_id() == 'clang'
+    dbi_cc_flags += cc.get_supported_arguments([
+                    '-Wno-float-equal',
+    ])
+endif
+
 libdbi = library('ogsdbi',
     sources : libdbi_sources,
     version : libogslib_version,
-    c_args : '-DOGS_DBI_COMPILATION',
-    include_directories : [libdbi_inc, libinc],
+    c_args : dbi_cc_flags,
+    include_directories : [libdbi_inc, libinc, cjson_inc],
     dependencies : [libcrypt_dep, libmongoc_dep],
     install : true)
 

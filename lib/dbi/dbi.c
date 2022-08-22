@@ -26,6 +26,7 @@
 #ifdef WITH_MONGOC
 #include "mongo/mongo-private.h"
 #endif
+#include "json/json-private.h"
 
 int __ogs_dbi_domain;
 
@@ -33,6 +34,7 @@ static ogs_dbi_t *dbi_interfaces[] = {
 #ifdef WITH_MONGOC
     &ogs_dbi_mongo_interface,
 #endif
+    &ogs_dbi_json_interface,
     NULL,
 };
 

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2019,2020 by Sukchan Lee <acetcom@gmail.com>
+ * Copyright (C) 2022 by sysmocom - s.f.m.c. GmbH <info@sysmocom.de>
+ * Author: Alexander Couzens <lynxis@fe80.eu>
  *
  * This file is part of Open5GS.
  *
@@ -17,36 +18,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef OGS_DBI_H
-#define OGS_DBI_H
+#if !defined(OGS_DBI_INSIDE) && !defined(OGS_DBI_COMPILATION)
+#error "This header cannot be included directly."
+#endif
 
-#include "crypt/ogs-crypt.h"
-
-#define OGS_DBI_INSIDE
-
-/* TODO: remove ogs-mongoc.h as soon the test cases don't depend on it */
-#include "dbi/mongo/ogs-mongoc.h"
-
-#include "dbi/subscription.h"
-#include "dbi/session.h"
-#include "dbi/ims.h"
-
-#undef OGS_DBI_INSIDE
+#ifndef OGS_DBI_JSON_PRIVATE_H
+#define OGS_DBI_JSON_PRIVATE_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern int __ogs_dbi_domain;
+#include "dbi-private.h"
 
-/* can be called multiple times for every apn */
-int ogs_dbi_json_init(const char *filepath, const char *apn);
-
-#undef OGS_LOG_DOMAIN
-#define OGS_LOG_DOMAIN __ogs_dbi_domain
+extern ogs_dbi_t ogs_dbi_json_interface;
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* OGS_DBI_H */
+#endif /* OGS_DBI_JSON_PRIVATE_H */
