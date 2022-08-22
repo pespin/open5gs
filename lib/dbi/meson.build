@@ -15,9 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+libdbi_conf = configuration_data()
 
 dbi_sources = files('''
     ogs-dbi.h
+    dbi.c
 '''.split())
 libdbi_sources = [dbi_sources]
 
@@ -31,8 +33,11 @@ mongo_sources = files('''
 
 libmongoc_dep = dependency('libmongoc-1.0', required: true)
 if libmongoc_dep.found()
+  libdbi_conf.set('WITH_MONGOC', 1)
   libdbi_sources += [mongo_sources]
 endif
+
+configure_file(output : 'dbi-config-private.h', configuration : libdbi_conf)
 
 libdbi_inc = include_directories('.')
 

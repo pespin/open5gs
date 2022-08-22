@@ -20,8 +20,8 @@
 #include <mongoc.h>
 
 #include "ogs-dbi.h"
-
-int __ogs_dbi_domain;
+#include "dbi-private.h"
+#include "mongo-private.h"
 
 static ogs_mongoc_t self;
 
@@ -158,11 +158,32 @@ ogs_mongoc_t *ogs_mongoc(void)
     return &self;
 }
 
+ogs_dbi_t ogs_dbi_mongo_interface = {
+    .name = "mongo",
+    /* session */
+    .session_data = ogs_dbi_mongo_session_data,
+    /* ims */
+    .msisdn_data = ogs_dbi_mongo_msisdn_data,
+    .ims_data = ogs_dbi_mongo_ims_data,
+    /* subscription */
+    .auth_info = ogs_dbi_mongo_auth_info,
+    .update_sqn = ogs_dbi_mongo_update_sqn,
+    .increment_sqn = ogs_dbi_mongo_increment_sqn,
+    .update_imeisv = ogs_dbi_mongo_update_imeisv,
+    .subscription_data = ogs_dbi_mongo_subscription_data,
+};
+
 int ogs_dbi_init(const char *db_uri)
+{
+    return ogs_dbi_mongo_init(db_uri);
+}
+
+int ogs_dbi_mongo_init(const char *db_uri)
 {
     int rv;
 
     ogs_assert(db_uri);
+    ogs_dbi_select_interface("mongo");
 
     rv = ogs_mongoc_init(db_uri);
     if (rv != OGS_OK) return rv;
@@ -172,6 +193,7 @@ int ogs_dbi_init(const char *db_uri)
             ogs_mongoc()->client, ogs_mongoc()->name, "subscribers");
         ogs_assert(self.collection.subscriber);
     }
+
 
     return OGS_OK;
 }

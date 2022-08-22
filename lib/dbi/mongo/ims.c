@@ -20,8 +20,9 @@
 #include <mongoc.h>
 
 #include "ogs-dbi.h"
+#include "mongo-private.h"
 
-int ogs_dbi_msisdn_data(
+int ogs_dbi_mongo_msisdn_data(
         char *imsi_or_msisdn_bcd, ogs_msisdn_data_t *msisdn_data)
 {
     int rv = OGS_OK;
@@ -119,7 +120,7 @@ out:
     return rv;
 }
 
-int ogs_dbi_ims_data(char *supi, ogs_ims_data_t *ims_data)
+int ogs_dbi_mongo_ims_data(char *supi, ogs_ims_data_t *ims_data)
 {
     int rv = OGS_OK;
     mongoc_cursor_t *cursor = NULL;
