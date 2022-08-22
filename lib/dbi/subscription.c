@@ -17,6 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <mongoc.h>
+
 #include "ogs-dbi.h"
 
 int ogs_dbi_auth_info(char *supi, ogs_dbi_auth_info_t *auth_info)

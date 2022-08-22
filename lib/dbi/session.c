@@ -17,6 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <mongoc.h>
+
 #include "ogs-dbi.h"
 
 int ogs_dbi_session_data(char *supi, ogs_s_nssai_t *s_nssai, char *dnn,
