@@ -15,18 +15,24 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-libdbi_sources = files('''
+
+dbi_sources = files('''
     ogs-dbi.h
+'''.split())
+libdbi_sources = [dbi_sources]
 
-    ogs-mongoc.h
-
-    ogs-mongoc.c
-    subscription.c
-    session.c
-    ims.c
+mongo_sources = files('''
+    mongo/ogs-mongoc.h
+    mongo/ogs-mongoc.c
+    mongo/subscription.c
+    mongo/session.c
+    mongo/ims.c
 '''.split())
 
-libmongoc_dep = dependency('libmongoc-1.0')
+libmongoc_dep = dependency('libmongoc-1.0', required: true)
+if libmongoc_dep.found()
+  libdbi_sources += [mongo_sources]
+endif
 
 libdbi_inc = include_directories('.')
 

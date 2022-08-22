@@ -25,7 +25,7 @@
 #define OGS_DBI_INSIDE
 
 /* TODO: remove ogs-mongoc.h as soon the test cases don't depend on it */
-#include "dbi/ogs-mongoc.h"
+#include "dbi/mongo/ogs-mongoc.h"
 
 #include "dbi/subscription.h"
 #include "dbi/session.h"
