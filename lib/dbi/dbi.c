@@ -76,12 +76,16 @@ int ogs_dbi_msisdn_data(
         char *imsi_or_msisdn_bcd, ogs_msisdn_data_t *msisdn_data)
 {
     ogs_assert(dbi_selected);
+    if (!dbi_selected->msisdn_data)
+        return OGS_ERROR;
     return dbi_selected->msisdn_data(imsi_or_msisdn_bcd, msisdn_data);
 }
 
 int ogs_dbi_ims_data(char *supi, ogs_ims_data_t *ims_data)
 {
     ogs_assert(dbi_selected);
+    if (!dbi_selected->ims_data)
+        return OGS_ERROR;
     return dbi_selected->ims_data(supi, ims_data);
 }
 
@@ -90,6 +94,8 @@ int ogs_dbi_session_data(char *supi, ogs_s_nssai_t *s_nssai, char *dnn,
         ogs_session_data_t *session_data)
 {
     ogs_assert(dbi_selected);
+    if (!dbi_selected->session_data)
+        return OGS_ERROR;
     return dbi_selected->session_data(supi, s_nssai, dnn, session_data);
 }
 
@@ -97,24 +103,32 @@ int ogs_dbi_session_data(char *supi, ogs_s_nssai_t *s_nssai, char *dnn,
 int ogs_dbi_auth_info(char *supi, ogs_dbi_auth_info_t *auth_info)
 {
     ogs_assert(dbi_selected);
+    if (!dbi_selected->auth_info)
+        return OGS_ERROR;
     return dbi_selected->auth_info(supi, auth_info);
 }
 
 int ogs_dbi_update_sqn(char *supi, uint64_t sqn)
 {
     ogs_assert(dbi_selected);
+    if (!dbi_selected->update_sqn)
+        return OGS_ERROR;
     return dbi_selected->update_sqn(supi, sqn);
 }
 
 int ogs_dbi_increment_sqn(char *supi)
 {
     ogs_assert(dbi_selected);
+    if (!dbi_selected->increment_sqn)
+        return OGS_ERROR;
     return dbi_selected->increment_sqn(supi);
 }
 
 int ogs_dbi_update_imeisv(char *supi, char *imeisv)
 {
     ogs_assert(dbi_selected);
+    if (!dbi_selected->update_imeisv)
+        return OGS_ERROR;
     return dbi_selected->update_imeisv(supi, imeisv);
 }
 
@@ -122,6 +136,7 @@ int ogs_dbi_subscription_data(char *supi,
         ogs_subscription_data_t *subscription_data)
 {
     ogs_assert(dbi_selected);
+    if (!dbi_selected->subscription_data)
+        return OGS_ERROR;
     return dbi_selected->subscription_data(supi, subscription_data);
 }
-
