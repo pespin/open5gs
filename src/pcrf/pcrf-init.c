@@ -35,8 +35,21 @@ int pcrf_initialize(void)
             ogs_app()->logger.domain, ogs_app()->logger.level);
     if (rv != OGS_OK) return rv;
 
-    rv = ogs_dbi_init(ogs_app()->db_uri);
-    if (rv != OGS_OK) return rv;
+    if (ogs_app()->db_uri) {
+        rv = ogs_dbi_mongo_init(ogs_app()->db_uri);
+        if (rv != OGS_OK) return rv;
+    } else if (ogs_app()->db_json[0].apn) {
+        int i;
+        for (i = 0; i < OGS_APP_DB_JSON_MAX_APNS; i++) {
+            if (ogs_app()->db_json[i].apn && ogs_app()->db_json[i].filepath) {
+                rv = ogs_dbi_json_init(ogs_app()->db_json[i].filepath, ogs_app()->db_json[i].apn);
+                if (rv != OGS_OK) return rv;
+            }
+        }
+    } else {
+        ogs_error("No database selected!");
+        return OGS_ERROR;
+    }
 
     rv = pcrf_fd_init();
     if (rv != OGS_OK) return OGS_ERROR;

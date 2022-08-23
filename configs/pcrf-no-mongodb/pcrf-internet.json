@@ -1,0 +1,32 @@
+[
+    {
+        "id": -1,
+            "qci": 5,
+            "priority": 5,
+            "pre_emption_capability": 0,
+            "pre_emption_vulnerability": 1,
+            "ambr": {
+                "up": 1000,
+                "down": 10000
+            },
+            "gmbr": {
+                "up": 500,
+                "down": 500
+            }
+    },
+    {
+        "id": 4660,
+            "qci": 5,
+            "priority": 5,
+            "pre_emption_capability": 0,
+            "pre_emption_vulnerability": 1,
+            "ambr": {
+                "up": 1000,
+                "down": 10000
+            },
+            "gmbr": {
+                "up": 500,
+                "down": 500
+            }
+    }
+]

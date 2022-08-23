@@ -28,6 +28,8 @@
 extern "C" {
 #endif
 
+#define OGS_APP_DB_JSON_MAX_APNS 16
+
 typedef struct ogs_app_context_s {
     const char *version;
 
@@ -35,6 +37,11 @@ typedef struct ogs_app_context_s {
     void *document;
 
     const char *db_uri;
+    struct {
+        const char *apn;
+        const char *filepath;
+    } db_json[OGS_APP_DB_JSON_MAX_APNS];
+
     struct {
         const char *file;
         const char *level;
