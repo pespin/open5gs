@@ -134,6 +134,10 @@ int ogs_mongoc_init(const char *db_uri)
 
 void ogs_mongoc_final(void)
 {
+    if (self.collection.subscriber) {
+        mongoc_collection_destroy(self.collection.subscriber);
+    }
+
     if (self.database) {
         mongoc_database_destroy(self.database);
         self.database = NULL;
@@ -200,9 +204,5 @@ int ogs_dbi_mongo_init(const char *db_uri)
 
 void ogs_dbi_final()
 {
-    if (self.collection.subscriber) {
-        mongoc_collection_destroy(self.collection.subscriber);
-    }
-
     ogs_mongoc_final();
 }
