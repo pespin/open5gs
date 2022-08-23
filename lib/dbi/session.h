@@ -28,8 +28,10 @@
 extern "C" {
 #endif
 
+#define OGS_DBI_NO_CHARGING_CHAR -1
+
 int ogs_dbi_session_data(char *supi, ogs_s_nssai_t *s_nssai, char *dnn,
-        ogs_session_data_t *session_data);
+        int32_t charging_char, ogs_session_data_t *session_data);
 
 #ifdef __cplusplus
 }

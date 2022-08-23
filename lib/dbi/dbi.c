@@ -93,12 +93,12 @@ int ogs_dbi_ims_data(char *supi, ogs_ims_data_t *ims_data)
 
 /* session */
 int ogs_dbi_session_data(char *supi, ogs_s_nssai_t *s_nssai, char *dnn,
-        ogs_session_data_t *session_data)
+        int32_t charging_char, ogs_session_data_t *session_data)
 {
     ogs_assert(dbi_selected);
     if (!dbi_selected->session_data)
         return OGS_ERROR;
-    return dbi_selected->session_data(supi, s_nssai, dnn, session_data);
+    return dbi_selected->session_data(supi, s_nssai, dnn, charging_char, session_data);
 }
 
 /* subscription */

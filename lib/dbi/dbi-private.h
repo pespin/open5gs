@@ -34,7 +34,7 @@ struct ogs_dbi_s {
     void (*final)(void);
     /* session */
     int (*session_data)(char *supi, ogs_s_nssai_t *s_nssai, char *dnn,
-	ogs_session_data_t *data);
+            int32_t charging_char, ogs_session_data_t *data);
     /* ims */
     int (*msisdn_data)(char *imsi_or_msisdn_bcd, ogs_msisdn_data_t *msisdn_data);
     int (*ims_data)(char *supi, ogs_ims_data_t *ims_data);

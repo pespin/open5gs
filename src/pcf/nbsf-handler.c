@@ -123,7 +123,8 @@ bool pcf_nbsf_management_handle_register(
     ogs_sbi_header_free(&header);
 
     rv = ogs_dbi_session_data(
-            pcf_ue->supi, &sess->s_nssai, sess->dnn, &session_data);
+            pcf_ue->supi, &sess->s_nssai, sess->dnn, OGS_DBI_NO_CHARGING_CHAR,
+            &session_data);
     if (rv != OGS_OK) {
         strerror = ogs_msprintf("[%s:%d] Cannot find SUPI in DB",
                 pcf_ue->supi, sess->psi);

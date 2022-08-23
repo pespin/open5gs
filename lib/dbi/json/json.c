@@ -360,13 +360,12 @@ fail:
     return ret;
 }
 
-static int json_session_data(char *supi, ogs_s_nssai_t *s_nssai, char *dnn, ogs_session_data_t *session_data)
+static int json_session_data(char *supi, ogs_s_nssai_t *s_nssai, char *dnn,
+        int32_t charging_char, ogs_session_data_t *session_data)
 {
     ogs_session_t *session = &session_data->session;
     ogs_json_apn_profile_t *profile;
     ogs_json_apn_t *db_apn = ogs_dbi_static_get_apn(dnn);
-
-    int charging_char = -1;
 
     if (!db_apn)
         db_apn = ogs_dbi_static_get_apn("*");
