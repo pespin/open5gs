@@ -63,6 +63,14 @@ int ogs_dbi_select_interface(const char *dbi_name)
     return -1;
 }
 
+void ogs_dbi_final(void)
+{
+    if (!dbi_selected)
+        return;
+
+    dbi_selected->final();
+}
+
 /* ims */
 int ogs_dbi_msisdn_data(
         char *imsi_or_msisdn_bcd, ogs_msisdn_data_t *msisdn_data)

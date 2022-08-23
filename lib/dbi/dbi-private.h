@@ -31,6 +31,7 @@ extern "C" {
 
 struct ogs_dbi_s {
     const char *name;
+    void (*final)(void);
     /* session */
     int (*session_data)(char *supi, ogs_s_nssai_t *s_nssai, char *dnn,
 	ogs_session_data_t *data);

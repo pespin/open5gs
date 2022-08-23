@@ -164,6 +164,8 @@ ogs_mongoc_t *ogs_mongoc(void)
 
 ogs_dbi_t ogs_dbi_mongo_interface = {
     .name = "mongo",
+    /* final */
+    .final = ogs_mongoc_final,
     /* session */
     .session_data = ogs_dbi_mongo_session_data,
     /* ims */
@@ -200,9 +202,4 @@ int ogs_dbi_mongo_init(const char *db_uri)
 
 
     return OGS_OK;
-}
-
-void ogs_dbi_final()
-{
-    ogs_mongoc_final();
 }
