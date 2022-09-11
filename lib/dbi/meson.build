@@ -16,6 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 libdbi_conf = configuration_data()
+libdbi_deps = [libcrypt_dep]
 
 dbi_sources = files('''
     ogs-dbi.h
@@ -31,6 +32,11 @@ mongo_sources = files('''
     mongo/ims.c
 '''.split())
 
+without_mongo_sources = files('''
+    mongo/dummy.c
+    mongo/ogs-mongoc.h
+'''.split())
+
 json_sources = files('''
     json/json.c
     external/cjson/cJSON.c
@@ -38,10 +44,16 @@ json_sources = files('''
 libdbi_sources += [json_sources]
 cjson_inc = include_directories('./external/')
 
-libmongoc_dep = dependency('libmongoc-1.0', required: true)
-if libmongoc_dep.found()
-  libdbi_conf.set('WITH_MONGOC', 1)
-  libdbi_sources += [mongo_sources]
+mongodb_optval = get_option('mongodb')
+if mongodb_optval
+    libmongoc_dep = dependency('libmongoc-1.0', required: true)
+    if libmongoc_dep.found()
+        libdbi_conf.set('WITH_MONGOC', 1)
+        libdbi_sources += [mongo_sources]
+        libdbi_deps += [libmongoc_dep]
+    endif
+else
+    libdbi_sources += [without_mongo_sources]
 endif
 
 configure_file(output : 'dbi-config-private.h', configuration : libdbi_conf)
@@ -60,10 +72,10 @@ libdbi = library('ogsdbi',
     version : libogslib_version,
     c_args : dbi_cc_flags,
     include_directories : [libdbi_inc, libinc, cjson_inc],
-    dependencies : [libcrypt_dep, libmongoc_dep],
+    dependencies : libdbi_deps,
     install : true)
 
 libdbi_dep = declare_dependency(
     link_with : libdbi,
     include_directories : [libdbi_inc, libinc],
-    dependencies : [libcrypt_dep, libmongoc_dep])
+    dependencies : libdbi_deps)
