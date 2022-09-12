@@ -24,7 +24,9 @@
 
 #define OGS_DBI_INSIDE
 
-#include "dbi/ogs-mongoc.h"
+/* TODO: remove ogs-mongoc.h as soon the test cases don't depend on it */
+#include "dbi/mongo/ogs-mongoc.h"
+
 #include "dbi/subscription.h"
 #include "dbi/session.h"
 #include "dbi/ims.h"
@@ -36,6 +38,9 @@ extern "C" {
 #endif
 
 extern int __ogs_dbi_domain;
+
+/* can be called multiple times for every apn */
+int ogs_dbi_json_init(const char *filepath, const char *apn);
 
 #undef OGS_LOG_DOMAIN
 #define OGS_LOG_DOMAIN __ogs_dbi_domain

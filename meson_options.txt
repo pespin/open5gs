@@ -1,1 +1,2 @@
 option('metrics_impl', type : 'combo', choices : ['void', 'prometheus'], value : 'void', description : 'libogsmetrics implementation')
+option('mongodb', type : 'boolean', value : 'true', description : 'build with mongodb support')

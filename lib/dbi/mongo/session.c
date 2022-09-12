@@ -17,10 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "ogs-dbi.h"
+#include <mongoc.h>
 
-int ogs_dbi_session_data(char *supi, ogs_s_nssai_t *s_nssai, char *dnn,
-        ogs_session_data_t *session_data)
+#include "ogs-dbi.h"
+#include "mongo-private.h"
+
+int ogs_dbi_mongo_session_data(char *supi, ogs_s_nssai_t *s_nssai, char *dnn,
+        int32_t charging_char, ogs_session_data_t *session_data)
 {
     int rv = OGS_OK;
     mongoc_cursor_t *cursor = NULL;

@@ -17,6 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <mongoc.h>
+
 #include "test-config-private.h"
 #include "test-common.h"
 

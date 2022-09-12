@@ -54,7 +54,7 @@ pcrf_context_t *pcrf_self(void);
 int pcrf_context_parse_config(void);
 
 int pcrf_db_qos_data(char *imsi_bcd, char *apn,
-        ogs_session_data_t *session_data);
+        int32_t charging_char, ogs_session_data_t *session_data);
 
 void pcrf_sess_set_ipv4(const void *key, uint8_t *sid);
 void pcrf_sess_set_ipv6(const void *key, uint8_t *sid);

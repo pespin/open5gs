@@ -24,6 +24,8 @@
 #ifndef TEST_COMMON_CONTEXT_H
 #define TEST_COMMON_CONTEXT_H
 
+#include <mongoc.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

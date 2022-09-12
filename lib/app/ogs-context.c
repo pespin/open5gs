@@ -252,6 +252,25 @@ int ogs_app_context_parse_config(void)
         ogs_assert(root_key);
         if (!strcmp(root_key, "db_uri")) {
             self.db_uri = ogs_yaml_iter_value(&root_iter);
+        } else if (!strcmp(root_key, "db_json")) {
+            ogs_yaml_iter_t dbjson_iter;
+            ogs_yaml_iter_recurse(&root_iter, &dbjson_iter);
+            int apns = 0;
+            while (ogs_yaml_iter_next(&dbjson_iter)) {
+                const char *apn = ogs_yaml_iter_key(&dbjson_iter);
+                const char *apn_filepath;
+
+                if (apns >= OGS_APP_DB_JSON_MAX_APNS) {
+                    ogs_error("db_json: too many apns defined!");
+                    return OGS_ERROR;
+                }
+                ogs_assert(apn);
+                apn_filepath = ogs_yaml_iter_value(&dbjson_iter);
+                ogs_assert(apn_filepath);
+                self.db_json[apns].apn = apn;
+                self.db_json[apns].filepath = apn_filepath;
+                apns++;
+            }
         } else if (!strcmp(root_key, "logger")) {
             ogs_yaml_iter_t logger_iter;
             ogs_yaml_iter_recurse(&root_iter, &logger_iter);

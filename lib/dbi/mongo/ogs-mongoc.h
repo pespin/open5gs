@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 by Sukchan Lee <acetcom@gmail.com>
+ * Copyright (C) 2019,2020 by Sukchan Lee <acetcom@gmail.com>
  *
  * This file is part of Open5GS.
  *
@@ -21,20 +21,37 @@
 #error "This header cannot be included directly."
 #endif
 
-#ifndef OGS_DBI_SESSION_H
-#define OGS_DBI_SESSION_H
+#ifndef OGS_MONGOC_H
+#define OGS_MONGOC_H
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
-#define OGS_DBI_NO_CHARGING_CHAR -1
+typedef struct ogs_mongoc_s {
+    bool initialized;
+    const char *name;
+    void *uri;
+    void *client;
+    void *database;
 
-int ogs_dbi_session_data(char *supi, ogs_s_nssai_t *s_nssai, char *dnn,
-        int32_t charging_char, ogs_session_data_t *session_data);
+    char *masked_db_uri;
+
+    struct {
+        void *subscriber;
+    } collection;
+} ogs_mongoc_t;
+
+int ogs_mongoc_init(const char *db_uri);
+void ogs_mongoc_final(void);
+ogs_mongoc_t *ogs_mongoc(void);
+
+int ogs_dbi_init(const char *db_uri);
+int ogs_dbi_mongo_init(const char *db_uri);
+void ogs_dbi_final(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* OGS_DBI_SESSION_H */
+#endif /* OGS_MONGOC_H */

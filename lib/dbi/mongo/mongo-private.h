@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2019 by Sukchan Lee <acetcom@gmail.com>
+ * Copyright (C) 2022 by sysmocom - s.f.m.c. GmbH <info@sysmocom.de>
+ * Author: Alexander Couzens <lynxis@fe80.eu>
  *
  * This file is part of Open5GS.
  *
@@ -21,20 +22,36 @@
 #error "This header cannot be included directly."
 #endif
 
-#ifndef OGS_DBI_SESSION_H
-#define OGS_DBI_SESSION_H
+#ifndef OGS_DBI_MONGO_PRIVATE_H
+#define OGS_DBI_MONGO_PRIVATE_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define OGS_DBI_NO_CHARGING_CHAR -1
+#include "dbi-private.h"
 
-int ogs_dbi_session_data(char *supi, ogs_s_nssai_t *s_nssai, char *dnn,
+extern ogs_dbi_t ogs_dbi_mongo_interface;
+
+/* ims */
+int ogs_dbi_mongo_msisdn_data(
+        char *imsi_or_msisdn_bcd, ogs_msisdn_data_t *msisdn_data);
+int ogs_dbi_mongo_ims_data(char *supi, ogs_ims_data_t *ims_data);
+
+/* session */
+int ogs_dbi_mongo_session_data(char *supi, ogs_s_nssai_t *s_nssai, char *dnn,
         int32_t charging_char, ogs_session_data_t *session_data);
+
+/* subscription */
+int ogs_dbi_mongo_auth_info(char *supi, ogs_dbi_auth_info_t *auth_info);
+int ogs_dbi_mongo_update_sqn(char *supi, uint64_t sqn);
+int ogs_dbi_mongo_update_imeisv(char *supi, char *imeisv);
+int ogs_dbi_mongo_increment_sqn(char *supi);
+int ogs_dbi_mongo_subscription_data(char *supi,
+        ogs_subscription_data_t *subscription_data);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* OGS_DBI_SESSION_H */
+#endif /* OGS_DBI_MONGO_PRIVATE_H */

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2019,2020 by Sukchan Lee <acetcom@gmail.com>
+ * Copyright (C) 2022 by sysmocom - s.f.m.c. GmbH <info@sysmocom.de>
+ * Author: Alexander Couzens <lynxis@fe80.eu>
  *
  * This file is part of Open5GS.
  *
@@ -21,38 +22,19 @@
 #error "This header cannot be included directly."
 #endif
 
-#ifndef OGS_MONGOC_H
-#define OGS_MONGOC_H
-
-#include <mongoc.h>
+#ifndef OGS_DBI_JSON_PRIVATE_H
+#define OGS_DBI_JSON_PRIVATE_H
 
 #ifdef __cplusplus
 extern "C" {
-#endif /* __cplusplus */
+#endif
 
-typedef struct ogs_mongoc_s {
-    bool initialized;
-    const char *name;
-    void *uri;
-    void *client;
-    void *database;
+#include "dbi-private.h"
 
-    char *masked_db_uri;
-
-    struct {
-        void *subscriber;
-    } collection;
-} ogs_mongoc_t;
-
-int ogs_mongoc_init(const char *db_uri);
-void ogs_mongoc_final(void);
-ogs_mongoc_t *ogs_mongoc(void);
-
-int ogs_dbi_init(const char *db_uri);
-void ogs_dbi_final(void);
+extern ogs_dbi_t ogs_dbi_json_interface;
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* OGS_MONGOC_H */
+#endif /* OGS_DBI_JSON_PRIVATE_H */

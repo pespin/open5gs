@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2019 by Sukchan Lee <acetcom@gmail.com>
+ * Copyright (C) 2022 by sysmocom - s.f.m.c. GmbH <info@sysmocom.de>
+ * Author: Alexander Couzens <lynxis@fe80.eu>
  *
  * This file is part of Open5GS.
  *
@@ -17,24 +18,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined(OGS_DBI_INSIDE) && !defined(OGS_DBI_COMPILATION)
-#error "This header cannot be included directly."
-#endif
+/* This file will be used when build without mongodb support to support the old api */
+#include "ogs-dbi.h"
 
-#ifndef OGS_DBI_SESSION_H
-#define OGS_DBI_SESSION_H
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#define OGS_DBI_NO_CHARGING_CHAR -1
-
-int ogs_dbi_session_data(char *supi, ogs_s_nssai_t *s_nssai, char *dnn,
-        int32_t charging_char, ogs_session_data_t *session_data);
-
-#ifdef __cplusplus
+int ogs_dbi_init(const char *db_uri)
+{
+    return -ENODEV;
 }
-#endif
 
-#endif /* OGS_DBI_SESSION_H */
+int ogs_dbi_mongo_init(const char *db_uri)
+{
+    return -ENODEV;
+}
+
+int ogs_mongoc_init(const char *db_uri)
+{
+    return -ENODEV;
+}
+
+void ogs_mongoc_final(void)
+{
+}
+
+ogs_mongoc_t *ogs_mongoc(void)
+{
+    return NULL;
+}
+
+

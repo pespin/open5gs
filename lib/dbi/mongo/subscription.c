@@ -17,9 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "ogs-dbi.h"
+#include <mongoc.h>
 
-int ogs_dbi_auth_info(char *supi, ogs_dbi_auth_info_t *auth_info)
+#include "ogs-dbi.h"
+#include "mongo-private.h"
+
+int ogs_dbi_mongo_auth_info(char *supi, ogs_dbi_auth_info_t *auth_info)
 {
     int rv = OGS_OK;
     mongoc_cursor_t *cursor = NULL;
@@ -109,7 +112,7 @@ out:
     return rv;
 }
 
-int ogs_dbi_update_sqn(char *supi, uint64_t sqn)
+int ogs_dbi_mongo_update_sqn(char *supi, uint64_t sqn)
 {
     int rv = OGS_OK;
     bson_t *query = NULL;
@@ -148,7 +151,7 @@ int ogs_dbi_update_sqn(char *supi, uint64_t sqn)
     return rv;
 }
 
-int ogs_dbi_update_imeisv(char *supi, char *imeisv)
+int ogs_dbi_mongo_update_imeisv(char *supi, char *imeisv)
 {
     int rv = OGS_OK;
     bson_t *query = NULL;
@@ -189,7 +192,7 @@ int ogs_dbi_update_imeisv(char *supi, char *imeisv)
     return rv;
 }
 
-int ogs_dbi_increment_sqn(char *supi)
+int ogs_dbi_mongo_increment_sqn(char *supi)
 {
     int rv = OGS_OK;
     bson_t *query = NULL;
@@ -243,7 +246,7 @@ out:
     return rv;
 }
 
-int ogs_dbi_subscription_data(char *supi,
+int ogs_dbi_mongo_subscription_data(char *supi,
         ogs_subscription_data_t *subscription_data)
 {
     int rv = OGS_OK;

@@ -39,11 +39,13 @@ struct sess_state {
     char        *imsi_bcd;
     char        *apn;
 
-ED3(uint8_t     ipv4:1;,
+ED4(uint8_t     ipv4:1;,
     uint8_t     ipv6:1;,
-    uint8_t     reserved:6;)
+    uint8_t     charging:1;,
+    uint8_t     reserved:5;)
     uint32_t    addr;                   /* Framed-IPv4-Address */
     uint8_t     addr6[OGS_IPV6_LEN];    /* Framed-IPv6-Prefix */
+    int32_t     charging_chr;
 
     ogs_list_t  rx_list;
 
@@ -352,6 +354,23 @@ static int pcrf_gx_ccr_cb( struct msg **msg, struct avp *avp,
         sess_data->ipv6 = 1;
     }
 
+    /* Get 3GPP-Charging-Characteristics */
+    sess_data->charging_chr = -1;
+    ret = fd_msg_search_avp(qry, ogs_diam_gx_3gpp_charging_characteristics, &avp);
+    ogs_assert(ret == 0);
+    if (avp) {
+        ret = fd_msg_avp_hdr(avp, &hdr);
+        ogs_assert(ret == 0);
+        char charging_bin[OGS_CHRGCHARS_LEN];
+        memcpy(charging_bin,
+                OGS_HEX(hdr->avp_value->os.data, (int)hdr->avp_value->os.len, charging_bin), OGS_CHRGCHARS_LEN);
+        if (hdr->avp_value->os.len == 1)
+            sess_data->charging_chr = charging_bin[0];
+        else
+            sess_data->charging_chr = charging_bin[0] << 8 | charging_bin[1];
+        sess_data->charging = 1;
+    }
+
     /* Get IMSI + APN */
     ret = fd_msg_search_avp(qry, ogs_diam_subscription_id, &avp);
     ogs_assert(ret == 0);
@@ -416,10 +435,10 @@ static int pcrf_gx_ccr_cb( struct msg **msg, struct avp *avp,
 
     /* Retrieve QoS Data from Database */
     rv = pcrf_db_qos_data(
-            sess_data->imsi_bcd, sess_data->apn, &gx_message.session_data);
+            sess_data->imsi_bcd, sess_data->apn, sess_data->charging_chr, &gx_message.session_data);
     if (rv != OGS_OK) {
-        ogs_error("Cannot get data for IMSI(%s)+APN(%s)'",
-                sess_data->imsi_bcd, sess_data->apn);
+        ogs_error("Cannot get data for IMSI(%s)+APN(%s)+ChargingChr(%d)'",
+                sess_data->imsi_bcd, sess_data->apn, sess_data->charging_chr);
         result_code = OGS_DIAM_UNKNOWN_SESSION_ID;
         goto out;
     }
@@ -725,7 +744,7 @@ int pcrf_gx_send_rar(
 
         /* Retrieve QoS Data from Database */
         rv = pcrf_db_qos_data(
-                sess_data->imsi_bcd, sess_data->apn, &gx_message.session_data);
+                sess_data->imsi_bcd, sess_data->apn, sess_data->charging_chr, &gx_message.session_data);
         if (rv != OGS_OK) {
             ogs_error("Cannot get data for IMSI(%s)+APN(%s)'",
                     sess_data->imsi_bcd, sess_data->apn);

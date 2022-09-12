@@ -15,30 +15,67 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-libdbi_sources = files('''
+libdbi_conf = configuration_data()
+libdbi_deps = [libcrypt_dep]
+
+dbi_sources = files('''
     ogs-dbi.h
+    dbi.c
+'''.split())
+libdbi_sources = [dbi_sources]
 
-    ogs-mongoc.h
-
-    ogs-mongoc.c
-    subscription.c
-    session.c
-    ims.c
+mongo_sources = files('''
+    mongo/ogs-mongoc.h
+    mongo/ogs-mongoc.c
+    mongo/subscription.c
+    mongo/session.c
+    mongo/ims.c
 '''.split())
 
-libmongoc_dep = dependency('libmongoc-1.0')
+without_mongo_sources = files('''
+    mongo/dummy.c
+    mongo/ogs-mongoc.h
+'''.split())
+
+json_sources = files('''
+    json/json.c
+    external/cjson/cJSON.c
+'''.split())
+libdbi_sources += [json_sources]
+cjson_inc = include_directories('./external/')
+
+mongodb_optval = get_option('mongodb')
+if mongodb_optval
+    libmongoc_dep = dependency('libmongoc-1.0', required: true)
+    if libmongoc_dep.found()
+        libdbi_conf.set('WITH_MONGOC', 1)
+        libdbi_sources += [mongo_sources]
+        libdbi_deps += [libmongoc_dep]
+    endif
+else
+    libdbi_sources += [without_mongo_sources]
+endif
+
+configure_file(output : 'dbi-config-private.h', configuration : libdbi_conf)
 
 libdbi_inc = include_directories('.')
+
+dbi_cc_flags = ['-DOGS_DBI_COMPILATION']
+if cc.get_id() == 'gcc' or cc.get_id() == 'clang'
+    dbi_cc_flags += cc.get_supported_arguments([
+                    '-Wno-float-equal',
+    ])
+endif
 
 libdbi = library('ogsdbi',
     sources : libdbi_sources,
     version : libogslib_version,
-    c_args : '-DOGS_DBI_COMPILATION',
-    include_directories : [libdbi_inc, libinc],
-    dependencies : [libcrypt_dep, libmongoc_dep],
+    c_args : dbi_cc_flags,
+    include_directories : [libdbi_inc, libinc, cjson_inc],
+    dependencies : libdbi_deps,
     install : true)
 
 libdbi_dep = declare_dependency(
     link_with : libdbi,
     include_directories : [libdbi_inc, libinc],
-    dependencies : [libcrypt_dep, libmongoc_dep])
+    dependencies : libdbi_deps)
