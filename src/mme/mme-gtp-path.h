@@ -59,6 +59,9 @@ int mme_gtp1_send_ran_information_relay(
         mme_sgsn_t *sgsn, const uint8_t *buf, size_t len,
         const ogs_nas_rai_t *rai, uint16_t cell_id);
 
+int mme_gtp1_send_forward_relocation_request(
+        mme_sgsn_t *sgsn, mme_ue_t *mme_ue, const uint8_t *buf, size_t len);
+
 #ifdef __cplusplus
 }
 #endif

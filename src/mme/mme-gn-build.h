@@ -34,4 +34,7 @@ ogs_pkbuf_t *mme_gn_build_ran_information_relay(
                 uint8_t type, const uint8_t *buf, size_t len,
                 const ogs_nas_rai_t *rai, uint16_t cell_id);
 
+ogs_pkbuf_t *mme_gn_build_forward_relocation_request(
+                mme_ue_t *mme_ue, uint8_t type, const uint8_t *buf, size_t len);
+
 #endif /* MME_S11_BUILD_H */

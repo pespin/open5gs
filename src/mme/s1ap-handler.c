@@ -2810,6 +2810,73 @@ static void s1ap_handle_handover_required_intralte(enb_ue_t *source_ue,
     ogs_assert(r != OGS_ERROR);
 }
 
+/* 3GPP TS 23.401 "D.3.7 E-UTRAN to GERAN A/Gb mode Inter RAT handover" */
+static void s1ap_handle_handover_required_ltetogeran(enb_ue_t *source_ue,
+                S1AP_Cause_t *Cause, S1AP_TargetID_t *TargetID,
+                S1AP_Source_ToTarget_TransparentContainer_t *Source_ToTarget_TransparentContainer)
+{
+    struct S1AP_CGI	*cGI = NULL;
+    ogs_plmn_id_t plmn_id;
+    ogs_nas_rai_t rai;
+    uint16_t cell_id;
+    mme_sgsn_t *target_sgsn = NULL;
+    mme_ue_t *mme_ue = NULL;
+    int r;
+
+    ogs_assert(source_ue);
+    ogs_assert(Cause);
+    ogs_assert(TargetID);
+    ogs_assert(Source_ToTarget_TransparentContainer);
+
+    if (TargetID->present != S1AP_TargetID_PR_cGI) {
+        ogs_error("Unexpected TargetID (%d)", TargetID->present);
+        r = s1ap_send_handover_preparation_failure(source_ue,
+                S1AP_Cause_PR_protocol, S1AP_CauseProtocol_semantic_error);
+        ogs_expect(r == OGS_OK);
+        ogs_assert(r != OGS_ERROR);
+        return;
+    }
+    cGI = TargetID->choice.cGI;
+    ogs_assert(cGI);
+
+    memcpy(&plmn_id, cGI->pLMNidentity.buf, sizeof(plmn_id));
+    ogs_nas_from_plmn_id(&rai.lai.nas_plmn_id, &plmn_id);
+    memcpy(&rai.lai.lac, cGI->lAC.buf, sizeof(uint16_t));
+    rai.lai.lac = be16toh(rai.lai.lac);
+    if (cGI->rAC)
+        rai.rac = *cGI->rAC->buf;
+    else /* FIXME: what to do? how to search properly for target cell? */
+        rai.rac = 0xff;
+    memcpy(&cell_id, cGI->cI.buf, sizeof(uint16_t));
+    cell_id = be16toh(cell_id);
+    ogs_info("    RAI[MCC:%u MNC:%u LAC:%u RAC:%u] CI[%u]",
+                ogs_plmn_id_mcc(&plmn_id), ogs_plmn_id_mnc(&plmn_id),
+                rai.lai.lac, rai.rac, cell_id);
+
+    target_sgsn = mme_sgsn_find_by_routing_address(&rai, cell_id);
+    if (!target_sgsn) {
+        ogs_warn("No SGSN matching target cell! RAI[MCC:%u MNC:%u LAC:%u RAC:%u] CI[%u]",
+                    ogs_plmn_id_mcc(&plmn_id), ogs_plmn_id_mnc(&plmn_id),
+                    rai.lai.lac, rai.rac, cell_id);
+        return;
+    }
+
+    mme_ue = source_ue->mme_ue;
+    if (!mme_ue) {
+        ogs_error("No UE(mme-ue) context");
+        return;
+    }
+
+    source_ue->handover_type = S1AP_HandoverType_ltetogeran;
+
+    mme_gtp1_send_forward_relocation_request(target_sgsn, mme_ue,
+        Source_ToTarget_TransparentContainer->buf,
+        Source_ToTarget_TransparentContainer->size);
+    /* FIXME: we send HO Prep Failure because we don't fully support this yet... */
+    r = s1ap_send_handover_preparation_failure(source_ue,
+            S1AP_Cause_PR_protocol, S1AP_CauseProtocol_message_not_compatible_with_receiver_state);
+}
+
 void s1ap_handle_handover_required(mme_enb_t *enb, ogs_s1ap_message_t *message)
 {
     char buf[OGS_ADDRSTRLEN];
@@ -2951,8 +3018,10 @@ void s1ap_handle_handover_required(mme_enb_t *enb, ogs_s1ap_message_t *message)
     case S1AP_HandoverType_intralte:
         s1ap_handle_handover_required_intralte(source_ue, Cause, TargetID, Source_ToTarget_TransparentContainer);
         break;
-    case S1AP_HandoverType_ltetoutran:
     case S1AP_HandoverType_ltetogeran:
+        s1ap_handle_handover_required_ltetogeran(source_ue, Cause, TargetID, Source_ToTarget_TransparentContainer);
+        break;
+    case S1AP_HandoverType_ltetoutran:
     case S1AP_HandoverType_utrantolte:
     case S1AP_HandoverType_gerantolte:
     case S1AP_HandoverType_eps_to_5gs:

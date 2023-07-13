@@ -60,3 +60,31 @@ ogs_pkbuf_t *mme_gn_build_ran_information_relay(
     gtp1_message.h.type = type;
     return ogs_gtp1_build_msg(&gtp1_message);
 }
+
+/* TS 29.060 7.5.6 Forward Relocation Request */
+ogs_pkbuf_t *mme_gn_build_forward_relocation_request(
+                mme_ue_t *mme_ue, uint8_t type, const uint8_t *buf, size_t len)
+{
+    ogs_gtp1_message_t gtp1_message;
+    ogs_gtp1_forward_relocation_request_t *req = NULL;
+    //ogs_session_t *sess = mme_default_session(mme_ue);
+
+    ogs_debug("[Gn] build RAN Information Relay");
+
+    //ogs_assert(sess);
+
+    req = &gtp1_message.forward_relocation_request;
+    memset(&gtp1_message, 0, sizeof(ogs_gtp1_message_t));
+
+    req->imsi.presence = mme_ue->imsi_len > 0;
+    req->imsi.data = mme_ue->imsi;
+    req->imsi.len = mme_ue->imsi_len;
+
+    req->tunnel_endpoint_identifier_control_plane.presence = 1;
+    req->tunnel_endpoint_identifier_control_plane.u32 = mme_ue->mme_s11_teid;
+
+    /* TODO: implement */
+
+    gtp1_message.h.type = type;
+    return ogs_gtp1_build_msg(&gtp1_message);
+};

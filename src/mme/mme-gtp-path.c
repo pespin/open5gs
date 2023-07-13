@@ -795,3 +795,40 @@ int mme_gtp1_send_ran_information_relay(
 
     return rv;
 }
+
+/* TS 29.060 7.5.6 Forward Relocation Request */
+int mme_gtp1_send_forward_relocation_request(
+        mme_sgsn_t *sgsn, mme_ue_t *mme_ue, const uint8_t *buf, size_t len)
+{
+    int rv;
+    ogs_gtp1_header_t h;
+    ogs_pkbuf_t *pkbuf = NULL;
+    ogs_gtp_xact_t *xact = NULL;
+
+    ogs_assert(sgsn);
+    ogs_assert(buf);
+
+    memset(&h, 0, sizeof(ogs_gtp1_header_t));
+    h.type = OGS_GTP1_FORWARD_RELOCATION_REQUEST_TYPE;
+    h.teid = 0;
+
+    pkbuf = mme_gn_build_forward_relocation_request(mme_ue, h.type, buf, len);
+    if (!pkbuf) {
+        ogs_error("mme_gn_build_forward_relocation_request() failed");
+        return OGS_ERROR;
+    }
+
+    xact = ogs_gtp1_xact_local_create(&sgsn->gnode, &h, pkbuf, NULL, NULL);
+    if (!xact) {
+        ogs_error("ogs_gtp1_xact_local_create() failed");
+        return OGS_ERROR;
+    }
+    /* TS 29.060 8.2: "The Forward Relocation Request message, where the Tunnel
+     * Endpoint Identifier shall be set to all zeroes." */
+    xact->local_teid = 0;
+
+    rv = ogs_gtp_xact_commit(xact);
+    ogs_expect(rv == OGS_OK);
+
+    return rv;
+}
